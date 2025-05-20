@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Interview Question Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 2rem;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input, button {
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 1rem;
+      width: 300px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .questions {
+      margin-top: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    pre {
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>AI Interview Bot</h1>
+  <label for="jobTitle">Enter Job Title:</label><br>
+  <input type="text" id="jobTitle" placeholder="e.g. Backend Developer">
+  <br>
+  <button onclick="getQuestions()">Generate Questions</button>
+
+  <div class="questions" id="questionOutput"></div>
+
+  <script>
+    async function getQuestions() {
+      const jobTitle = document.getElementById("jobTitle").value;
+      const output = document.getElementById("questionOutput");
+
+      output.innerHTML = "⏳ Generating questions...";
+
+      try {
+        const response = await fetch("/api/interview", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ jobTitle })
+        });
+
+        const data = await response.json();
+        console.log("🧠 Response:", data);
+
+        if (data.questions) {
+          output.innerHTML = `<h3>Interview Questions:</h3><pre>${data.questions}</pre>`;
+        } else {
+          output.innerHTML = "⚠️ Could not load questions. Please try again.";
+        }
+      } catch (error) {
+        console.error(error);
+        output.innerHTML = "❌ Something went wrong. Check console.";
+      }
+    }
+  </script>
+</body>
+</html>
